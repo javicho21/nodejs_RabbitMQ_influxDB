@@ -6,7 +6,7 @@ const config = {
   "rabbitMq": {
     "url": process.env.AMQP_URL || 'amqp://w1:dNrUHMn97DNN@data.jarova.com:5672',
     "queueName": process.env.QUEUE_NAME || "HarpkeFamilyFarm",
-    "prefetchCount": 10000,
+    "prefetchCount": process.env.PREFETCH_COUNT || 100,
     "backupQueue": process.env.BACKUP_QUEUE || "InfluxDB-backup",
     "errorQueue": process.env.ERROR_QUEUE || "InfluxDB-error"
   },
