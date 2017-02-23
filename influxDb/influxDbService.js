@@ -89,6 +89,9 @@ class InfluxDbService {
         tags: tagsObj
       };
 
+      console.log("***** Fields object *******", fieldsObj);
+      console.log("***** Fields value type ***** ", typeof fieldsObj.value);
+
       if(!timestamp) delete out.timestamp;
 
       return Q({"error": false, "data": out, "point": line});

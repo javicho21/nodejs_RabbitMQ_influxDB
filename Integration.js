@@ -25,7 +25,7 @@ rabbitMQObj.on("msgReceived", msg => {
 
   influxDbObj.convertLineToJSON(msgContent)
     .then(result => {
-      console.log("JSON Result => ", result);
+      console.log("JSON Result => ", result.data);
       let {error, data, point} = result;
 
       if (error) {
