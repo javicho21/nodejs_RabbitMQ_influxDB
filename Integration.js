@@ -42,5 +42,7 @@ rabbitMQObj.on("msgReceived", msg => {
 
 rabbitMQObj.on("error", err => {
   console.log("ERROR OCCURED IN RABBIT CONTROLLER =>>> ", err)
-})
+});
 
+process.on('unhandledRejection', (err, p) => {
+});

@@ -16,8 +16,10 @@ class InfluxDbService {
   }
 
   connectToDb() {
+    if (!this.connection_) {
+      console.log(`${InfluxDbService.name}.connect(), Creating New Connection ===> `);
+    }
     this.connection_ = this.connection_ || new Influx.InfluxDB(this.influxConfig_);
-    console.log(`${InfluxDbService.name}.connect(), Creating New Connection ===> `);
     return Q(this.connection_);
   }
 

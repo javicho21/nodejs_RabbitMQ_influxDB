@@ -36,8 +36,10 @@ class RabbitMQ extends EventEmitter {
   }
 
   connect() {
+    if (!this.connection_) {
+      console.log(`${RabbitMQ.name}.connect(), Creating New Connection ===> `);
+    }
     this.connection_ = this.connection_ || amqp.connect(this.connectionUrl_, this.connectionOptions_);
-    console.log(`${RabbitMQ.name}.connect(), Creating New Connection ===> `);
     return this.connection_;
   }
 
