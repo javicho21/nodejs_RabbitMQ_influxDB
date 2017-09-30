@@ -48,16 +48,15 @@ class InfluxDbService {
         fieldsObj = {},
         measurement,
         tags = parts[0] || '',
-        fields = parts[1] || '',
+        fields = parts.length > 1 ? parts[1] : '',
         timestamp = parts[2];
 
       tags = this.splitColon(tags);
 
-
       measurement = tags.shift();
 
-      if (measurement.indexOf("=") > -1 || fields.indexOf("=") === -1 || parts.length >= 4) {
-        console.log("INVALID PAYLOAD =>>> ");
+      if (measurement.indexOf("=") > -1 || timestamp && isNaN(timestamp)) {
+        console.log("***** INVALID PAYLOAD *****");
         return Q({"error": true, "data": null, "point": line});
       }
 
