@@ -25,17 +25,20 @@ class InfluxDbService {
 
   writeToDb(data) {
     // this.connection_ = this.connection_ ? this.connection_.writePoints(data) :
-
-        this.connectToDb()
+        return this.connectToDb()
           .then(conn => {
-            conn.writePoints(data, (errmsg, returnValue) => {
+            return conn.writePoints([data], (errmsg, returnValue) => {
               if (errmsg) {
                 console.log("Error Occured in writePoints =>> ", errmsg);
+                throw err;
               }
+              return returnValue;
             });
           })
           .catch(err => {
-            console.log("Error in writeToDb() =>>>>> ", err);
+            console.log("Error in writeToDb() =>>>>> ");
+            data.error = err.message ? err.message : 'Unknown';
+            throw data;
           });
 
     // return this.connection_;

@@ -8,7 +8,7 @@ const {rabbitMq, influxDb} = require("./config"),
   InfluxDbService = require("./influxDb/influxDbService"),
   rabbitMQObj = new RabbitMQ(rabbitMq),
   influxDbObj = new InfluxDbService(influxDb),
-  {backupQueue, errorQueue} = rabbitMq;
+  {backupQueue, errorQueue, needBackup} = rabbitMq;
 
 rabbitMQObj.consume()
   .then(() => {
@@ -19,24 +19,20 @@ rabbitMQObj.consume()
   });
 
 rabbitMQObj.on("msgReceived", msg => {
-  let msgContent = msg.content.toString();
+  let msgContent = JSON.parse(msg.content.toString());
 
   console.log("QUEUE MESSAGE => ", msgContent);
 
-  influxDbObj.convertLineToJSON(msgContent)
+  influxDbObj.writeToDb(msgContent)
     .then(result => {
-      console.log("JSON Result => ", result.data);
-      let {error, data, point} = result;
-
-      if (error) {
-        rabbitMQObj.publish(point, errorQueue)
-      }else {
-        influxDbObj.writeToDb([data]);
-        rabbitMQObj.publish(point, backupQueue);
+      console.log('Insert Success', result);
+      if (needBackup) {
+        rabbitMQObj.publish(msgContent, backupQueue);
       }
     })
     .catch(err => {
-      console.log("Error in convertLineToJSON() =>>>>> ", err);
+      console.log('Failed to insert: ', err);
+      rabbitMQObj.publish(JSON.stringify(err), errorQueue);
     });
 });
 

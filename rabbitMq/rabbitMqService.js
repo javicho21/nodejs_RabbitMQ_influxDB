@@ -27,6 +27,8 @@ class RabbitMQ extends EventEmitter {
       // }
     };
 
+    this.ack = rabbitConfig.channelAck;
+
     /*this.exchangeOptions_ = {
       "durable": true,
       "autoDelete": false,
@@ -70,7 +72,6 @@ class RabbitMQ extends EventEmitter {
         channel.assertQueue(queue, this.queueOptions_);
 
         // let bufferMsg = typeof message === "string" ? Buffer.from(message) : Buffer.from(JSON.stringify(message));
-
         channel.sendToQueue(queue, Buffer.from(String(message)), (err, result) => {
           if (!err) {
             console.log(" [x] Sent %s", result);
@@ -113,9 +114,11 @@ class RabbitMQ extends EventEmitter {
 
               this.emit("msgReceived", msg);
 
-              channel.ack(msg);
+              if (this.ack) {
+                channel.ack(msg);
+              }
 
-            }, {"noAck": false});
+            }, {"noAck": !this.ack});
 
           });
       })
