@@ -69,7 +69,7 @@ class RabbitMQ extends EventEmitter {
     return this.createChannel()
       .then(channel => {
         console.log(`${RabbitMQ.name}.publish(): Publishing the message in queue: ${queueName} `);
-        channel.assertQueue(queue, this.queueOptions_);
+        channel.assertQueue(queue, queueOptions);
 
         // let bufferMsg = typeof message === "string" ? Buffer.from(message) : Buffer.from(JSON.stringify(message));
         channel.sendToQueue(queue, Buffer.from(String(message)), (err, result) => {

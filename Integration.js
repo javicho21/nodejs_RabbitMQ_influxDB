@@ -19,7 +19,8 @@ rabbitMQObj.consume()
   });
 
 rabbitMQObj.on("msgReceived", msg => {
-  let msgContent = JSON.parse(msg.content.toString());
+  let payload = msg.content.toString();
+  let msgContent = typeof payload === 'object' ? JSON.parse(payload) : payload;
 
   console.log("QUEUE MESSAGE => ", msgContent);
 
