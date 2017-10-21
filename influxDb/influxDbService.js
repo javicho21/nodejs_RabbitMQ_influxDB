@@ -23,22 +23,25 @@ class InfluxDbService {
     return Q(this.connection_);
   }
 
-  writeToDb(data) {
+  writeToDb(payload) {
     // this.connection_ = this.connection_ ? this.connection_.writePoints(data) :
         return this.connectToDb()
           .then(conn => {
-            return conn.writePoints([data], (errmsg, returnValue) => {
+            return conn.writePoints([payload], (errmsg, returnValue) => {
               if (errmsg) {
                 console.log("Error Occured in writePoints =>> ", errmsg);
-                throw err;
+                throw errmsg;
               }
               return returnValue;
             });
           })
           .catch(err => {
             console.log("Error in writeToDb() =>>>>> ");
-            data.error = err.message ? err.message : 'Unknown';
-            throw data;
+            const errorObj = {
+              payload,
+              influxErrorMessage: err.message ? err.message : 'Not Available'
+            }
+            throw errorObj;
           });
 
     // return this.connection_;
