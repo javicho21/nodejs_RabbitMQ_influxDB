@@ -8,7 +8,8 @@ const {rabbitMq, influxDb} = require("./config"),
   InfluxDbService = require("./influxDb/influxDbService"),
   rabbitMQObj = new RabbitMQ(rabbitMq),
   influxDbObj = new InfluxDbService(influxDb),
-  {backupQueue, errorQueue, needBackup} = rabbitMq;
+  {backupQueue, errorQueue, needBackup} = rabbitMq,
+  isJSON = require('is-json');
 
 rabbitMQObj.consume()
   .then(() => {
@@ -20,15 +21,16 @@ rabbitMQObj.consume()
 
 rabbitMQObj.on("msgReceived", msg => {
   let payload = msg.content.toString();
-  let msgContent = typeof payload === 'object' ? JSON.parse(payload) : payload;
 
-  console.log("QUEUE MESSAGE => ", msgContent);
+  console.log("QUEUE MESSAGE => ", payload);
+
+  let msgContent = JSON.parse(JSON.stringify(payload));
 
   influxDbObj.writeToDb(msgContent)
     .then(result => {
-      console.log('Insert Success', result);
+      console.log('Insert Success');
       if (needBackup) {
-        rabbitMQObj.publish(msgContent, backupQueue);
+        rabbitMQObj.publish(payload, backupQueue);
       }
     })
     .catch(err => {

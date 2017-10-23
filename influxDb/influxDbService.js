@@ -27,13 +27,7 @@ class InfluxDbService {
     // this.connection_ = this.connection_ ? this.connection_.writePoints(data) :
         return this.connectToDb()
           .then(conn => {
-            return conn.writePoints([payload], (errmsg, returnValue) => {
-              if (errmsg) {
-                console.log("Error Occured in writePoints =>> ", errmsg);
-                throw errmsg;
-              }
-              return returnValue;
-            });
+            return conn.writePoints([JSON.parse(payload)])
           })
           .catch(err => {
             console.log("Error in writeToDb() =>>>>> ");
